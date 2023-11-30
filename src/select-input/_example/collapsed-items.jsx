@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { SelectInput, Checkbox, Tag, Space } from 'tdesign-react';
+import { SelectInput, Checkbox, Tag, Space, Popup, Radio } from 'tdesign-react';
 import { ChevronDownIcon } from 'tdesign-icons-react';
 
 const classStyles = `
@@ -46,6 +46,11 @@ const OPTIONS = [
 export default function SelectInputCollapsedItems() {
   const [options, setOptions] = useState([...OPTIONS]);
   const [value, setValue] = useState(OPTIONS.slice(1));
+
+  const [size, setSize] = useState('medium');
+  const [disabled, setDisabled] = useState(false);
+  const [readonly, setReadonly] = useState(false);
+  const [minCollapsedNum] = useState(1);
 
   const getCheckboxValue = () => {
     const arr = [];
@@ -97,6 +102,34 @@ export default function SelectInputCollapsedItems() {
     }
   };
 
+  const renderCollapsedItems = ({ value, onClose }) => {
+    const count = value.length - minCollapsedNum;
+    const collapsedTags = value.slice(minCollapsedNum, value.length);
+    if (count <= 0) return null;
+    return (
+      <Popup
+        key={'tags'}
+        content={collapsedTags.map((item, index) => (
+          <Tag
+            key={item}
+            style={{ marginRight: '4px' }}
+            size={size}
+            disabled={disabled}
+            closable={!readonly && !disabled}
+            onClose={(context) => onClose({ e: context.e, index: minCollapsedNum + index })}
+          >
+            {item}
+          </Tag>
+        ))}
+      >
+        <Tag
+          size={size}
+          disabled={disabled}
+        >More({count})</Tag>
+      </Popup>
+    );
+  }
+
   const CheckboxPanel = (
     <Checkbox.Group
       value={checkboxValue}
@@ -113,6 +146,8 @@ export default function SelectInputCollapsedItems() {
 
   return (
     <Space direction="vertical" className="tdesign-demo__select-input-collapsed-items">
+
+      <h3>default: </h3>
       {/* <!-- :popup-props="{ trigger: 'hover' }" --> */}
       <SelectInput
         value={value}
@@ -123,17 +158,35 @@ export default function SelectInputCollapsedItems() {
         multiple
         onTagChange={onTagChange}
       />
-      <br /> <br />
+
       {/* 使用 collapsedItems 自定义折叠标签 */}
+      <h3>use collapsedItems: </h3>
+      <Space>
+        <div>size control:</div>
+        <Radio.Group value={size} options={['small', 'medium', 'large']} onChange={setSize} />
+      </Space>
+      <Space>
+        <span>disabled control:</span>
+        <Checkbox checked={disabled} onChange={setDisabled} />
+      </Space>
+      <Space>
+        <span>readonly control:</span>
+        <Checkbox checked={readonly} onChange={setReadonly} />
+      </Space>
       <SelectInput
         value={value}
-        minCollapsedNum={2}
         panel={CheckboxPanel}
         suffixIcon={<ChevronDownIcon key="suffixIcon" />}
-        collapsedItems={({ collapsedTags }) => <Tag key={'More'}>More(+{collapsedTags.length})</Tag>}
         clearable
         multiple
         onTagChange={onTagChange}
+        minCollapsedNum={minCollapsedNum}
+        collapsedItems={renderCollapsedItems}
+        tagInputProps={{
+          size,
+        }}
+        disabled={disabled}
+        readonly={readonly}
       />
     </Space>
   );

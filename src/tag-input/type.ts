@@ -7,7 +7,7 @@
 import { InputProps } from '../input';
 import { InputValue } from '../input';
 import { TagProps } from '../tag';
-import { TNode, TElement } from '../common';
+import { TNode, TElement, SizeEnum } from '../common';
 import { MouseEvent, KeyboardEvent, ClipboardEvent, FocusEvent, FormEvent, CompositionEvent } from 'react';
 
 export interface TdTagInputProps {
@@ -24,7 +24,10 @@ export interface TdTagInputProps {
   /**
    * 标签过多的情况下，折叠项内容，默认为 `+N`。如果需要悬浮就显示其他内容，可以使用 collapsedItems 自定义。`value` 表示当前存在的所有标签，`collapsedTags` 表示折叠的标签，`count` 表示折叠的数量
    */
-  collapsedItems?: TNode<{ value: TagInputValue; collapsedTags: TagInputValue; count: number }>;
+  collapsedItems?: TNode<{
+    value: TagInputValue;
+    onClose: (p: { e?: MouseEvent<SVGSVGElement>; index: number }) => void;
+  }>;
   /**
    * 是否禁用标签输入框
    */
@@ -79,7 +82,7 @@ export interface TdTagInputProps {
    * 尺寸
    * @default medium
    */
-  size?: 'small' | 'medium' | 'large';
+  size?: SizeEnum;
   /**
    * 输入框状态
    */

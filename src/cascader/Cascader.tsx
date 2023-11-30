@@ -72,7 +72,7 @@ const Cascader: React.FC<CascaderProps> = (originalProps) => {
       popupVisible={visible}
       allowInput={isFilterable}
       minCollapsedNum={props.minCollapsedNum}
-      collapsedItems={props.collapsedItems as any}
+      collapsedItems={props.collapsedItems}
       readonly={props.readonly}
       clearable={props.clearable}
       placeholder={inputPlaceholder}

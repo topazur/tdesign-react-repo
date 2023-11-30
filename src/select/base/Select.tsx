@@ -2,6 +2,7 @@ import React, {
   useEffect,
   Ref,
   useMemo,
+  MouseEvent,
   KeyboardEvent,
   useRef,
   useCallback,
@@ -117,6 +118,20 @@ const Select = forwardRefWithStatics(
       }
       return get(selectedOptions[0] || {}, keys?.label || 'label') || undefined;
     }, [selectedOptions, keys, multiple]);
+
+    // 点击标签关闭按钮，删除标签
+    const onClose = useCallback(
+      (p: { e?: MouseEvent<SVGSVGElement>; index: number }) => {
+        const { e, index } = p;
+
+        e?.stopPropagation();
+        const values = getSelectValueArr(value, value[index], true, valueType, keys);
+        const selectedOptions = getSelectedOptions(values, multiple, valueType, keys, tmpPropOptions);
+        onChange(values, { e, selectedOptions, trigger: 'uncheck' });
+        tagProps?.onClose?.({ e });
+      },
+      [value, valueType, keys, multiple, tagProps, tmpPropOptions, onChange],
+    );
 
     const handleShowPopup = (visible: boolean, ctx: PopupVisibleChangeContext) => {
       if (disabled) return;
@@ -327,14 +342,7 @@ const Select = forwardRefWithStatics(
                 closable={!filterOption?.disabled && !disabled && !readonly}
                 size={size}
                 {...tagProps}
-                onClose={({ e }) => {
-                  e.stopPropagation();
-                  const values = getSelectValueArr(value, value[key], true, valueType, keys);
-
-                  const selectedOptions = getSelectedOptions(values, multiple, valueType, keys, tmpPropOptions);
-                  onChange(values, { e, selectedOptions, trigger: 'uncheck' });
-                  tagProps?.onClose?.({ e });
-                }}
+                onClose={(context) => onClose({ e: context.e, index: key })}
               >
                 {v}
               </Tag>
@@ -355,11 +363,10 @@ const Select = forwardRefWithStatics(
         collapsedItems
           ? parseContentTNode(collapsedItems, {
               value: selectedLabel,
-              collapsedSelectedItems: selectedLabel.slice(minCollapsedNum, selectedLabel.length),
-              count: selectedLabel.length - minCollapsedNum,
+              onClose,
             })
           : null,
-      [selectedLabel, collapsedItems, minCollapsedNum],
+      [selectedLabel, collapsedItems, onClose],
     );
 
     // 将第一个选中的 option 置于列表可见范围的最后一位

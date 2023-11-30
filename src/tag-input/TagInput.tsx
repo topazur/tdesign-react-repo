@@ -114,7 +114,7 @@ const TagInput = forwardRef((props: TagInputProps, ref: React.RefObject<InputRef
   const displayNode = isFunction(valueDisplay)
     ? valueDisplay({
         value: tagValue,
-        onClose: (index, item) => onClose({ index, item }),
+        onClose: (index) => onClose({ index }),
       })
     : valueDisplay;
 
