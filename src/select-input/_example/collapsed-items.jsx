@@ -102,14 +102,14 @@ export default function SelectInputCollapsedItems() {
     }
   };
 
-  const renderCollapsedItems = ({ value, onClose }) => {
-    const count = value.length - minCollapsedNum;
-    const collapsedTags = value.slice(minCollapsedNum, value.length);
+  const renderCollapsedItems = ({ value, collapsedSelectedItems, count, onClose }) => {
+    // const count = value.length - minCollapsedNum;
+    // const collapsedSelectedItems = value.slice(minCollapsedNum, value.length);
     if (count <= 0) return null;
     return (
       <Popup
         key={'tags'}
-        content={collapsedTags.map((item, index) => (
+        content={collapsedSelectedItems.map((item, index) => (
           <Tag
             key={item}
             style={{ marginRight: '4px' }}

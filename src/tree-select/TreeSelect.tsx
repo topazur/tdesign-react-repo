@@ -302,6 +302,8 @@ const TreeSelect = forwardRef((props: TreeSelectProps, ref) => {
             isFunction(props.collapsedItems)
               ? props.collapsedItems({
                   value: normalizedValue,
+                  collapsedSelectedItems: normalizedValue.slice(props.minCollapsedNum, normalizedValue.length),
+                  count: normalizedValue.length - props.minCollapsedNum,
                   onClose,
                 })
               : props.collapsedItems

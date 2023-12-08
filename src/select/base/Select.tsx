@@ -37,8 +37,8 @@ import { parseContentTNode } from '../../_util/parseTNode';
 export interface SelectProps<T = SelectOption> extends TdSelectProps<T>, StyledProps {
   // 子节点
   children?: React.ReactNode;
-  onMouseEnter?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
-  onMouseLeave?: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  onMouseEnter?: React.MouseEventHandler<HTMLDivElement>;
+  onMouseLeave?: React.MouseEventHandler<HTMLDivElement>;
 }
 
 type OptionsType = TdOptionProps[];
@@ -363,10 +363,12 @@ const Select = forwardRefWithStatics(
         collapsedItems
           ? parseContentTNode(collapsedItems, {
               value: selectedLabel,
+              collapsedSelectedItems: selectedLabel.slice(minCollapsedNum, selectedLabel.length),
+              count: selectedLabel.length - minCollapsedNum,
               onClose,
             })
           : null,
-      [selectedLabel, collapsedItems, onClose],
+      [selectedLabel, collapsedItems, minCollapsedNum, onClose],
     );
 
     // 将第一个选中的 option 置于列表可见范围的最后一位
